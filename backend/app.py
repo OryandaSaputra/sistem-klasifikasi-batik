@@ -8,8 +8,16 @@ import tensorflow as tf
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 
 app = Flask(__name__)
-# Izinkan CORS agar frontend (React) dapat mengakses API ini
-CORS(app)
+
+# Izinkan CORS agar frontend (React) dapat mengakses API ini.
+# Set env var FRONTEND_URL di Railway (mis. https://nama-app-kamu.vercel.app)
+# agar hanya domain tersebut yang diizinkan. Jika tidak diset, semua origin
+# diizinkan (cocok untuk development lokal).
+FRONTEND_URL = os.environ.get("FRONTEND_URL")
+if FRONTEND_URL:
+    CORS(app, resources={r"/*": {"origins": [FRONTEND_URL, "http://localhost:5173"]}})
+else:
+    CORS(app)
 
 # Konfigurasi berdasarkan Notebook
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
